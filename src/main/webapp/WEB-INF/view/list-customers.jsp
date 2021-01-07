@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+ <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 
 <html>
@@ -25,29 +26,51 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="${pageContext.request.contextPath}/customer/list">Home <span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item active">
+                	<!-- Display add customer button if user is manager or admin -->
+            		<security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+            			<a class="nav-link" href="${pageContext.request.contextPath}/customer/showFormForAdd">Add Customer</a>
+             		</security:authorize>
+                </li>
             </ul>
+            
             <form:form action="search" method="GET" class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search by name" name="theSearchName" aria-label="Search">
-                <button class="btn btn-light my-2 my-sm-0" type="submit">Search</button>
+                <button class="btn btn-light my-2 my-sm-0 mr-2" type="submit">Search</button>
             </form:form>
-            <button onclick="window.location.href='showFormForAdd'; return false;"
-             type="button" class="btn btn-light mx-2">Add Customer</button>
+        
+             <!-- Logout button -->
+			<form:form action="${pageContext.request.contextPath}/logout" method="POST" class="form-inline my-2 my-lg-0">
+				<button class="btn btn-light my-2 my-sm-0" type="submit">Logout</button>
+			</form:form>
         </div>
     </nav>
    	
    	<div class="container mt-4">
-   		
+   	
+   	<%-- 
+   		Username :<security:authentication property="principal.username"/> <br>
+		Roles : <security:authentication property="principal.authorities"/> 
+	--%>
+	
    		<table class="table">
         <thead>
             <tr>
+            	<th scope="col">#</th>
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
                 <th scope="col">Email</th>
-                <th scope="col">Action</th>
+                <security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+                	<th scope="col">Action</th>
+                </security:authorize>
             </tr>
         </thead>
         <tbody>
         	
+        	<!-- initialize count -->
+        	<c:set var="count" value="0" scope="page" />
+        	
+        	<!-- Loop through list -->
         	<c:forEach var="tempCustomer" items="${customers}">
 				
 					<!-- construct an "update" link with customer id -->
@@ -60,15 +83,28 @@
 						<c:param name="customerId" value="${tempCustomer.id}" />
 					</c:url>					
         	
-        
+        		<!-- Increment count -->
+        		<c:set var="count" value="${count+1}" scope="page" />
+        		
 	            <tr>
+	            	
+	            	<td>${count}</td>
                 	<td> ${tempCustomer.firstName} </td>
 					<td> ${tempCustomer.lastName} </td>
 					<td> ${tempCustomer.email} </td>
 					<td>
-						<a href="${updateLink}" class="btn btn-primary" >Update</a>
-						<a href="${deleteLink}" class="btn btn-danger" 
-						   onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a>
+						
+						<!-- Display update button if user is manager or admin, else hide -->
+						<security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+							<a href="${updateLink}" class="btn btn-primary" >Update</a>
+						</security:authorize>
+						
+						<!-- Display delete button if user is admin, else hide -->
+						<security:authorize access="hasAnyRole('ADMIN')">
+							<a href="${deleteLink}" class="btn btn-danger" 
+						   		onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a>
+						</security:authorize>
+						   
 					</td>
 	            </tr>
 	            

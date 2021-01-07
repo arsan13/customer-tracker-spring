@@ -25,6 +25,10 @@
                     <a class="nav-link" href="${pageContext.request.contextPath}/customer/list">Home <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
+            <!-- Logout button -->
+			<form:form action="${pageContext.request.contextPath}/logout" method="POST" class="form-inline my-2 my-lg-0">
+				<button class="btn btn-light my-2 my-sm-0" type="submit">Logout</button>
+			</form:form>
          </div>
     </nav>
 

@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+ <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 
 <html>
@@ -26,6 +26,10 @@
                     <a class="nav-link" href="${pageContext.request.contextPath}/customer/list">Home <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
+            <form:form action="search" method="GET" class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search by name" name="theSearchName" aria-label="Search">
+                <button class="btn btn-light my-2 my-sm-0" type="submit">Search</button>
+            </form:form>
             <button onclick="window.location.href='showFormForAdd'; return false;"
              type="button" class="btn btn-light mx-2">Add Customer</button>
         </div>
